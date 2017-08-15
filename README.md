@@ -5,6 +5,8 @@ You can find the most recent version of this guide [here](https://github.com/fac
 
 ## Table of Contents
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/hhsnopek/tomify-frontend.svg?token=c543f9921e0fbd3a9cd36394b024649e3b28e03fb88431e7e6c49efe5b9d5e13&ts=1502839122970)](https://greenkeeper.io/)
+
 - [Updating to New Releases](#updating-to-new-releases)
 - [Sending Feedback](#sending-feedback)
 - [Folder Structure](#folder-structure)
