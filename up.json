@@ -1,0 +1,12 @@
+{
+  "name": "tomify-frontend",
+  "type": "static",
+  "regions": ["us-east-1"],
+  "static": {
+    "dir": "build"
+  },
+  "hooks": {
+    "build": "npm run build",
+    "clean": "npm run clean"
+  }
+}
