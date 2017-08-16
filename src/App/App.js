@@ -120,7 +120,7 @@ class App extends Component {
               <img src={preview} alt={preview} />
             </CopyToClipboard>
             <a className="button" onClick={this.clearState}>
-              Upload another one!
+              Click me or refresh to start over!
             </a>
           </div>}
 
