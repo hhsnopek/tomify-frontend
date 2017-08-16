@@ -15,8 +15,5 @@
     "test": "react-scripts test --env=jsdom",
     "clean": "rm -rf build"
   },
-  "devDependencies": {
-    "react-crouton": "^0.3.1"
-  },
-  "homepage": "https://t95rec3x14.execute-api.us-east-1.amazonaws.com/production/"
+  "homepage": "https://t95rec3x14.execute-api.us-east-1.amazonaws.com/production"
 }
