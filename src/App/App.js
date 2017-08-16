@@ -5,7 +5,8 @@ import CopyToClipboard from 'react-copy-to-clipboard'
 import logo from './assets/tom-wiggle.gif'
 import './App.css'
 
-const URL = "https://m27c8w7std.execute-api.us-east-1.amazonaws.com/production"
+const URL = 'https://m27c8w7std.execute-api.us-east-1.amazonaws.com/production'
+const cachedURL = 'http://d33mq7kft5dle8.cloudfront.net/'
 
 class App extends Component {
   state = {
@@ -21,7 +22,12 @@ class App extends Component {
   }
 
   upload = files => {
-    this.setState({ loading: true, uploading: true, statusType: undefined, statusMessage: undefined })
+    this.setState({
+      loading: true,
+      uploading: true,
+      statusType: undefined,
+      statusMessage: undefined
+    })
     const file = files[0]
 
     let body = new FormData()
@@ -31,15 +37,21 @@ class App extends Component {
       .then(res => {
         return new Promise((resolve, reject) => {
           res.json().then(data => {
-            if (res.status !== 200)
-              reject({ message: data })
+            if (res.status !== 200) reject({ message: data })
 
             resolve(data.url)
           })
         })
       })
       .then(url => {
-        this.setState({ preview: url, loading: false, uploading: false, statusType: undefined, statusMessage: undefined })
+        url = new URL(new URL(url).pathname, cachedURL)
+        this.setState({
+          preview: url,
+          loading: false,
+          uploading: false,
+          statusType: undefined,
+          statusMessage: undefined
+        })
       })
       .catch(err => {
         console.log(err)
@@ -58,7 +70,6 @@ class App extends Component {
             statusMessage: JSON.stringify(err)
           })
         }
-
       })
   }
 
