@@ -21,7 +21,7 @@ class App extends Component {
   }
 
   upload = files => {
-    this.setState({ loading: true, uploading: true })
+    this.setState({ loading: true, uploading: true, statusType: undefined, statusMessage: undefined })
     const file = files[0]
 
     let body = new FormData()
