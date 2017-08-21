@@ -5,8 +5,8 @@ import CopyToClipboard from 'react-copy-to-clipboard'
 import logo from './assets/tom-wiggle.gif'
 import './App.css'
 
-const URL = 'https://m27c8w7std.execute-api.us-east-1.amazonaws.com/production'
-const cachedURL = 'http://d33mq7kft5dle8.cloudfront.net/'
+const SERVER_URL = 'https://m27c8w7std.execute-api.us-east-1.amazonaws.com/production'
+const CACHED_URL = 'http://d33mq7kft5dle8.cloudfront.net/'
 
 class App extends Component {
   state = {
@@ -33,7 +33,7 @@ class App extends Component {
     let body = new FormData()
     body.append('file', file)
 
-    fetch(`${URL}/upload`, { method: 'POST', body })
+    fetch(`${SERVER_URL}/upload`, { method: 'POST', body })
       .then(res => {
         return new Promise((resolve, reject) => {
           res.json().then(data => {
@@ -44,7 +44,7 @@ class App extends Component {
         })
       })
       .then(url => {
-        url = new URL(new URL(url).pathname, cachedURL)
+        url = new window.URL(new window.URL(url).pathname, CACHED_URL)
         this.setState({
           preview: url,
           loading: false,
