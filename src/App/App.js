@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import Dropzone from 'react-dropzone'
 import CopyToClipboard from 'react-copy-to-clipboard'
+import { getStatusText } from 'http-status-codes'
+import { NotificationContainer, NotificationManager } from 'react-notifications'
+import 'react-notifications/lib/notifications.css'
 
 import logo from './assets/tom-wiggle.gif'
 import './App.css'
@@ -15,18 +18,13 @@ class App extends Component {
     loading: true,
     uploading: false,
     copied: false,
-
-    preview: undefined,
-    statusMessage: undefined,
-    statusType: undefined
+    preview: undefined
   }
 
   upload = files => {
     this.setState({
       loading: true,
-      uploading: true,
-      statusType: undefined,
-      statusMessage: undefined
+      uploading: true
     })
     const file = files[0]
 
@@ -36,11 +34,16 @@ class App extends Component {
     fetch(`${SERVER_URL}/upload`, { method: 'POST', body })
       .then(res => {
         return new Promise((resolve, reject) => {
-          res.json().then(data => {
-            if (res.status !== 200) reject({ message: data })
-
-            resolve(data.url)
-          })
+          if (res.status !== 200)
+            return res
+              .text()
+              .then(err => reject(new Error(err)))
+              .catch(() => reject(res))
+          res
+            .json()
+            .then(
+              data => (res.status !== 200 ? reject(res) : resolve(data.url))
+            )
         })
       })
       .then(url => {
@@ -48,28 +51,25 @@ class App extends Component {
         this.setState({
           preview: url,
           loading: false,
-          uploading: false,
-          statusType: undefined,
-          statusMessage: undefined
+          uploading: false
         })
       })
       .catch(err => {
-        console.log(err)
-        if (err.message) {
-          this.setState({
-            uploading: false,
-            loading: false,
-            statusType: 'error',
-            statusMessage: err.message
-          })
-        } else {
-          this.setState({
-            uploading: false,
-            loading: false,
-            statusType: 'error',
-            statusMessage: JSON.stringify(err)
-          })
-        }
+        console.error(err)
+        NotificationManager.error(
+          err.message ||
+            err.description ||
+            err.status +
+              ' ' +
+              (err.statusText !== ''
+                ? err.statusText
+                : getStatusText(err.status)) ||
+            'API Unavailable'
+        )
+        this.setState({
+          uploading: false,
+          loading: false
+        })
       })
   }
 
@@ -79,9 +79,7 @@ class App extends Component {
       rejected: [],
       loading: false,
       copied: false,
-      preview: undefined,
-      statusMessage: undefined,
-      statusType: undefined
+      preview: undefined
     })
   }
 
@@ -90,14 +88,7 @@ class App extends Component {
   }
 
   render() {
-    const {
-      copied,
-      preview,
-      loading,
-      uploading,
-      statusMessage,
-      statusType
-    } = this.state
+    const { copied, preview, loading, uploading } = this.state
 
     return (
       <div id="app">
@@ -105,13 +96,7 @@ class App extends Component {
           <h1>Tomify</h1>
         </div>
 
-        {statusMessage &&
-          statusType &&
-          <div id="status" className={statusType}>
-            <h1>
-              {statusMessage}
-            </h1>
-          </div>}
+        <NotificationContainer />
 
         {loading &&
           <div id="loading">
@@ -141,7 +126,11 @@ class App extends Component {
             className="dropzone"
             accept="image/jpeg, image/png"
             onDrop={(accepted, rejected) => {
-              if (accepted) this.upload(accepted)
+              if (accepted.length > 0) this.upload(accepted)
+              else
+                NotificationManager.error(
+                  `Filetype not supported, ${rejected[0].type}`
+                )
               this.setState({ accepted, rejected })
             }}
           >
